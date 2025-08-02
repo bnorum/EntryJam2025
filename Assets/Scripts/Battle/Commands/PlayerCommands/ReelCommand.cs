@@ -9,13 +9,14 @@ public class ReelCommand : ICommand
         reelDistance = distance;
     }
 
-    public void Execute(ICombatant self, ICombatant player, BattleManager battleManager)
+    public void Execute(ICombatant self, ICombatant fish, BattleManager battleManager)
     {
-        // Logic for executing the reel command
         Debug.Log($"Executing Reel with distance: {reelDistance}");
+        ((IFish)fish).DecreaseDistance(reelDistance);
+        battleManager.EnqueueMessage($"{self.Name} reels in the line by {reelDistance} feet.");
     }
 
-    public string GetDescription(ICombatant self, ICombatant player)
+    public string GetDescription(ICombatant self, ICombatant fish)
     {
         return $"Reels the line by {reelDistance} units.";
     }

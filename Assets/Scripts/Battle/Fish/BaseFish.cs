@@ -26,12 +26,13 @@ public class BaseFish : IFish
     // Constructor.
     // We create a fish like this:
     // BaseFish fish = new BaseFish("FishName", 100, 20, 10, 5);
-    public BaseFish(string name, int maxDist, int maxMp, int atk, int def)
+    public BaseFish(string name, int maxDist, int maxMp, int atk, int def, Sprite spr)
     {
         fishName = name;
         maxDistance = maxDist;
-        distance = 0;
+        distance = maxDist;
         maxMP = maxMp;
+        sprite = spr;
         mp = maxMp;
         attack = atk;
         defense = def;
