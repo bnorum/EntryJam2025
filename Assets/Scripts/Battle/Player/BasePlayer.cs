@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 [System.Serializable]
@@ -12,7 +13,8 @@ public class BasePlayer : IPlayer
     [SerializeField] private int maxMP;
     [SerializeField] private int attack;
     [SerializeField] private int defense;
-    [SerializeField] private List<Item> inventory;
+    [SerializeField] private List<IItem> inventory;
+    [SerializeField] private List<ITechnique> techniques;
 
     public string Name => playerName;
     public int EXH => exhaustion;
@@ -22,7 +24,8 @@ public class BasePlayer : IPlayer
     public int MaxMP => maxMP;
     public int ATK => attack;
     public int DEF => defense;
-    public List<Item> Inventory => inventory;
+    public List<IItem> Inventory => inventory;
+    public List<ITechnique> Techniques => techniques;
 
 
     // Constructor.
@@ -38,7 +41,8 @@ public class BasePlayer : IPlayer
         attack = atk;
         defense = def;
         bracing = false;
-        inventory = new List<Item>();
+        inventory = new List<IItem>();
+        techniques = new List<ITechnique>();
     }
 
 
@@ -72,11 +76,14 @@ public class BasePlayer : IPlayer
         bracing = false;
     }
 
-    public void UseItem(int index)
+    public ITechnique GetTechnique(int index)
     {
-        if (index < 0 || index >= inventory.Count) return;
+        return Techniques[index];
+    }
 
-        Item item = inventory[index];
-        // Implement item usage logic here
+    public IItem GetItem(int index)
+    {
+        if (index < 0 || index >= inventory.Count) return null;
+        return inventory[index];
     }
 }

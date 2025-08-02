@@ -16,6 +16,7 @@ public class PullCommand : ICommand
             ((IPlayer)player).Exhaust(exhaustionDamage / 2);
             ((IFish)self).IncreaseDistance(exhaustionDamage / 4); // Assuming pulling the line also affects the fish's distance. Which it does.
             battleManager.EnqueueMessage($"{self.Name} tugs and exhausts you for {exhaustionDamage / 2} points.");
+            ((IPlayer)player).Unbrace(); 
         }
         else
         {

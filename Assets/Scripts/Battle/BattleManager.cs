@@ -34,7 +34,7 @@ public class BattleManager : MonoBehaviour
 
     // Queue of messages that will be displayed in the UI.
     // I use a queue in case two messages are sent at the same time, so that we can display them one after the other.
-    private Queue<string> messageQueue = new Queue<string>();
+    private Queue<(string text, bool showInput)> messageQueue = new Queue<(string, bool)>();
     public bool isShowingMessage = false;
     public bool isShowingInput = false;
     public TMP_Text logText;
@@ -44,7 +44,7 @@ public class BattleManager : MonoBehaviour
 
 
     // Needs to be expanded if we decide to have a party system.
-    public enum BattleState { START, PLAYERTURN, FISHTURN, WIN, LOSE }
+    public enum BattleState { START, PLAYERTURN, FISHTURN, WIN, LOSE, RUN}
     public BattleState state;
 
     //DUMMY SPRITE FOR NOW :))))
@@ -56,19 +56,22 @@ public class BattleManager : MonoBehaviour
 
         // Until we can pass values into the battle manager, we will use this to set up the battle.
         // This is a placeholder for the actual battle setup logic.
-        StartCoroutine(SetupBattle(new BasePlayer("Fisherman", 100, 30, 10, 5), new BaseFish("Smallmouth Bass", 20, 20, 10, 5, dummySprite)));
+        // Instead of using this, eventually we will have a transitionary script which will pass the player and fish objects to the battle manager.
+        StartCoroutine(SetupBattle(new BasePlayer("Fisherman", 100, 10, 10, 5), new BaseFish("Smallmouth Bass", 20, 20, 10, 5, dummySprite)));
     }
 
     void Update()
     {
-        Debug.Log(fish.DST);
+
     }
 
 
-    IEnumerator SetupBattle(BasePlayer player, BaseFish fish)
+    IEnumerator SetupBattle(BasePlayer p, BaseFish f)
     {
-        this.player = player;
-        this.fish = fish;
+        player = p;
+        DemoMethod();
+        fish = f;
+        UpdateStats();
 
         FishSpriteRenderer.sprite = fish.Sprite;
         strategy = new AlwaysPullStrategy(fish.ATK);
@@ -81,12 +84,19 @@ public class BattleManager : MonoBehaviour
         PlayerTurn();
     }
 
+    public void DemoMethod()
+    {
+        player.Inventory.Add(new WaterBottle());
+        player.Inventory.Add(new WaterBottle());
+        player.Techniques.Add(new SuperReelTechnique());
+    }
+
     // This method is called when the player presses the reel button.
     // It creates a ReelCommand and executes it.
     public void OnReelButton()
     {
         if (state != BattleState.PLAYERTURN) return; // Just
-        ICommand reelCommand = new ReelCommand(5);
+        ICommand reelCommand = new ReelCommand(player.ATK);
         StartCoroutine(ExecutePlayerCommand(reelCommand));
     }
 
@@ -100,16 +110,72 @@ public class BattleManager : MonoBehaviour
     public void OnSnapLineButton()
     {
         if (state != BattleState.PLAYERTURN) return; // Case
-        ICommand snapLineCommand = new SnapLineCommand(10);
-        StartCoroutine(ExecutePlayerCommand(snapLineCommand));
+        state = BattleState.RUN;
+        EndBattle();
+    }
+
+    public void OnTechniqueButton()
+    {
+        if (state != BattleState.PLAYERTURN) return;
+        BattleUIManager.Instance.ShowTechniqueMenu();
+    }
+
+    public void OnItemButton()
+    {
+        if (state != BattleState.PLAYERTURN) return;
+        BattleUIManager.Instance.ShowItemMenu();
+    }
+
+    public bool OnUseTechnique(int techniqueIndex)
+    {
+        if (state != BattleState.PLAYERTURN) return false; // Just in case
+        ICommand techniqueCommand = player.GetTechnique(techniqueIndex);
+        if (techniqueCommand == null)
+        {
+            Debug.LogWarning("Invalid technique index.");
+            return false;
+        }
+
+        // Check if player has enough MP for the technique
+
+        if (player.MP < player.GetTechnique(techniqueIndex).Cost)
+        {
+            //play error sound
+            return false; // I return a boolean so I can pass it back to UI manager and tell it not to close the menu
+        }
+        else
+        {
+            StartCoroutine(ExecutePlayerCommand(techniqueCommand));
+            return true;
+        }
+
+    }
+
+    public void OnUseItem(int itemIndex)
+    {
+        if (state != BattleState.PLAYERTURN) return;
+
+        if (itemIndex < 0 || itemIndex >= player.Inventory.Count)
+        {
+            EnqueueMessage("Invalid item selection.");
+            return;
+        }
+
+        IItem item = player.Inventory[itemIndex];
+        player.Inventory.RemoveAt(itemIndex); // Consume the item
+
+        ICommand command = item.Command;
+        StartCoroutine(ExecutePlayerCommand(command));
+        BattleUIManager.Instance.HideItemMenu();
     }
 
 
     // We use a coroutine to execute commands so that we can yield for potential animations or effects.
     IEnumerator ExecutePlayerCommand(ICommand command)
     {
-        isShowingInput = false;
+
         command.Execute(player, fish, this);
+        isShowingInput = false; //Hide input UI after execution
         UpdateStats(); // Update the stats after executing the command
         yield return new WaitForSeconds(1f);
 
@@ -133,20 +199,29 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
-        EnqueueMessage("Choose an Action:");
-        //TODO: Overhaul this!!!!!!!
+        EnqueueMessage("Choose an Action:", true);
     }
 
     // We use a coroutine to execute commands so that we can yield for potential animations or effects.
     IEnumerator FishTurn()
     {
-        if (state != BattleState.FISHTURN) Debug.LogWarning("It's not the fish's turn!");
+        if (state != BattleState.FISHTURN)
+            Debug.LogWarning("It's not the fish's turn!");
 
-        ICommand command = strategy.ChooseCommand(fish, player); // Unlike the player, the fish doesn't have buttons to press, so we use the strategy to choose a command.
+        // Choose attack first
+        ICommand command = strategy.ChooseCommand(fish, player);
+
+        // Enqueue fish attack message BEFORE executing
+        EnqueueMessage($"{fish.Name} lashes out!"); // Or a more descriptive attack message
+
+        // Wait until the queued message is fully displayed and confirmed
+        yield return new WaitUntil(() => messageQueue.Count == 0 && !isShowingMessage);
+
+        // Now execute attack AFTER player has acknowledged the message
         command.Execute(fish, player, this);
         UpdateStats();
 
-        yield return new WaitForSeconds(1f); // Simulate some delay for the command execution.
+        yield return new WaitForSeconds(1f); // Optional animation delay
 
         if (player.EXH > 100)
         {
@@ -155,10 +230,9 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            state = BattleState.PLAYERTURN; // Switch back to player's turn.
+            state = BattleState.PLAYERTURN;
             PlayerTurn();
         }
-
     }
 
     void EndBattle()
@@ -172,13 +246,17 @@ public class BattleManager : MonoBehaviour
         {
             EnqueueMessage("Your line snapped!");
             // Handle lose logic
+        } else if (state == BattleState.RUN)
+        {
+            EnqueueMessage("You snapped your line!");
+            // Handle run logic
         }
     }
 
     // Ideally, this should be in a UIManager class, whoops.
-    public void EnqueueMessage(string message)
+    public void EnqueueMessage(string message, bool isPlayerTurnMessage = false)
     {
-        messageQueue.Enqueue(message);
+        messageQueue.Enqueue((message, isPlayerTurnMessage));
         if (!isShowingMessage)
             StartCoroutine(ShowMessages());
     }
@@ -189,11 +267,14 @@ public class BattleManager : MonoBehaviour
 
         while (messageQueue.Count > 0)
         {
-            string nextMessage = messageQueue.Dequeue();
+            (string nextMessage, bool isPlayerTurnMessage) = messageQueue.Dequeue();
             yield return StartCoroutine(TypeText(nextMessage));
+
+            isShowingInput = isPlayerTurnMessage;
 
             yield return new WaitUntil(() => BattleUIManager.Instance.confirmAction.triggered);
         }
+
 
         isShowingMessage = false;
     }
@@ -217,7 +298,7 @@ public class BattleManager : MonoBehaviour
             yield return new WaitForSeconds(0.02f);
         }
 
-        if (logText.text == "Choose an Action:") isShowingInput = true; //TODO: Fix this later
+
 
 
         BattleUIManager.Instance.confirmAction.performed -= ctx => skip = true;

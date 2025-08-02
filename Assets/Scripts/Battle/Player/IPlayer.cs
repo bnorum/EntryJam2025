@@ -10,7 +10,9 @@ public interface IPlayer : ICombatant
     int MaxEXH { get; } // Max Exhaustion. A unique player value.
     bool Bracing { get; } // Defending, but for fishing.
 
-    List<Item> Inventory { get; }
+    List<IItem> Inventory { get; }
+    List<ITechnique> Techniques { get; }
+
 
     void Exhaust(int amount); // Increase Exhaustion
     void Relieve(int amount); // Decrease Exhaustion
@@ -18,5 +20,6 @@ public interface IPlayer : ICombatant
     void Brace(); // Defend
     void Unbrace(); // Stop Defending
 
-    void UseItem(int index);
+    ITechnique GetTechnique(int index); // Get a technique from the player's list
+    IItem GetItem(int index); // Get an item from the player's inventory
 }
