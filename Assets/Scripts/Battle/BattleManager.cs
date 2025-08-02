@@ -57,7 +57,7 @@ public class BattleManager : MonoBehaviour
         // Until we can pass values into the battle manager, we will use this to set up the battle.
         // This is a placeholder for the actual battle setup logic.
         // Instead of using this, eventually we will have a transitionary script which will pass the player and fish objects to the battle manager.
-        StartCoroutine(SetupBattle(new BasePlayer("Fisherman", 100, 10, 10, 5), new BaseFish("Smallmouth Bass", 20, 20, 10, 5, dummySprite)));
+        StartCoroutine(SetupBattle(new BasePlayer("Fisherman", 100, 30, 10, 5), new BaseFish("Smallmouth Bass", 20, 20, 10, 5, dummySprite)));
     }
 
     void Update()
