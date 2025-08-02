@@ -2787,6 +2787,7 @@ MonoBehaviour:
   playerStats: {fileID: 1399237475}
   state: 0
   dummySprite: {fileID: -3628058483901414374, guid: 4f6cba83cb5517948a86dd734325dd2d, type: 3}
+  dummyBackground: {fileID: 4468308762290143377, guid: e2eb334b73cc2064da1657f9c5132ebe, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

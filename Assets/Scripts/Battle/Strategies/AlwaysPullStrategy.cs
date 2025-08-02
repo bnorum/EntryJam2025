@@ -1,14 +1,16 @@
+using System.IO;
+
 public class AlwaysPullStrategy : IStrategy
 {
-    private int pullDistance;
 
-    public AlwaysPullStrategy(int distance = 5)
+
+    public AlwaysPullStrategy()
     {
-        pullDistance = distance;
+
     }
 
     public ICommand ChooseCommand(IFish self, IPlayer player)
     {
-        return new PullCommand(pullDistance);
+        return new PullCommand(self.ATK);
     }
 }

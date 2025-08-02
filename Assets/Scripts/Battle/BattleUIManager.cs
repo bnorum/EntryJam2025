@@ -116,16 +116,10 @@ public class BattleUIManager : MonoBehaviour
         // Handle cancel action
         if (cancelAction.triggered && BattleManager.Instance.isShowingInput)
         {
-            if (isInItemMenu)
-            {
-                HideItemMenu();
-                isInItemMenu = false;
-            }
-            else if (isInTechniqueMenu)
-            {
-                HideTechniqueMenu();
-                isInTechniqueMenu = false;
-            }
+            HideItemMenu();
+            isInItemMenu = false;
+            HideTechniqueMenu();
+            isInTechniqueMenu = false;
         }
 
         // Show or hide the button panel based on the battle state
@@ -150,6 +144,10 @@ public class BattleUIManager : MonoBehaviour
         {
             buttonPanel.transform.position = Vector2.Lerp(buttonPanel.transform.position, buttonHideTarget.position, Time.deltaTime * 10f);
         }
+
+        // Ideally, we wouldn't do this. Whatever.
+        ShowSelectedItem();
+        ShowSelectedTechnique();
 
 
 
@@ -222,20 +220,6 @@ public class BattleUIManager : MonoBehaviour
             itemMenuText.text = "No items available.";
             return;
         }
-
-        for (int i = 0; i < player.Inventory.Count; i++)
-        {
-            IItem item = player.GetItem(i);
-            if (i == selectedItemIndex)
-            {
-                itemMenuText.text += $"\n<color=yellow>{item.Name}</color>";
-            }
-            else
-            {
-                itemMenuText.text += $"\n{item.Name}";
-            }
-
-        }
     }
 
     public void HideItemMenu()
@@ -258,7 +242,41 @@ public class BattleUIManager : MonoBehaviour
             techniqueMenuText.text = "No techniques available.";
             return;
         }
+    }
 
+    public void HideTechniqueMenu()
+    {
+        techniqueMenu.SetActive(false);
+        techniqueMenuText.text = "";
+        selectedTechniqueIndex = 0;
+    }
+
+    public void ShowSelectedItem()
+    {
+        itemMenuText.text = "";
+        //Highlight the selected item in the item menu
+        IPlayer player = BattleManager.Instance.player;
+        for (int i = 0; i < player.Inventory.Count; i++)
+        {
+            IItem item = player.GetItem(i);
+            if (i == selectedItemIndex)
+            {
+                itemMenuText.text += $"\n<color=yellow>{item.Name}</color>";
+            }
+            else
+            {
+                itemMenuText.text += $"\n{item.Name}";
+            }
+        }
+
+
+    }
+
+    public void ShowSelectedTechnique()
+    {
+        techniqueMenuText.text = "";
+        // Highlight the selected technique in the technique menu
+        IPlayer player = BattleManager.Instance.player;
         for (int i = 0; i < player.Techniques.Count; i++)
         {
             ITechnique technique = player.GetTechnique(i);
@@ -272,14 +290,6 @@ public class BattleUIManager : MonoBehaviour
             }
         }
     }
-
-    public void HideTechniqueMenu()
-    {
-        techniqueMenu.SetActive(false);
-        techniqueMenuText.text = "";
-        selectedTechniqueIndex = 0;
-    }
-
 }
 
 

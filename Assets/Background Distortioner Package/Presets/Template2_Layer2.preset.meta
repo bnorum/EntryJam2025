@@ -1,7 +1,8 @@
 fileFormatVersion: 2
-guid: e23d2d34eb473dd45bdac85b6f2b66b2
-DefaultImporter:
+guid: da56e9976812a4936a0f88c3f2304404
+NativeFormatImporter:
   externalObjects: {}
+  mainObjectFileID: 2655988077585873504
   userData: 
   assetBundleName: 
   assetBundleVariant: 
@@ -10,5 +11,5 @@ AssetOrigin:
   productId: 147876
   packageName: Distortional Background Effect Shader
   packageVersion: 1.1
-  assetPath: Assets/Scenes/SampleScene.unity
+  assetPath: Assets/Background Distortioner Package/Presets/Template2_Layer2.preset
   uploadId: 317564
