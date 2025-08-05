@@ -924,10 +924,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -1147,6 +1147,8 @@ MonoBehaviour:
   overworldPlayerPosition: {fileID: 0}
   player:
     level: 0
+    exp: 0
+    expToNext: 0
     playerName: 
     exhaustion: 0
     maxExhaustion: 0
@@ -1156,6 +1158,7 @@ MonoBehaviour:
     attack: 0
     defense: 0
   playerPrefab: {fileID: 180091386520832865, guid: c6d9819270f4f4c4b8b37ba6923782ad, type: 3}
+  mainCamera: {fileID: 0}
 --- !u!4 &2143668784
 Transform:
   m_ObjectHideFlags: 0
