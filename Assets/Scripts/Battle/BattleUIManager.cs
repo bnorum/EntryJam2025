@@ -81,20 +81,20 @@ public class BattleUIManager : MonoBehaviour
         // Handle item and technique menu navigation
         if (moveInput.y > 0 && moveAction.triggered && isInItemMenu)
         {
-            selectedItemIndex = (selectedItemIndex - 1 + BattleManager.Instance.player.Inventory.Count) % BattleManager.Instance.player.Inventory.Count; // Move up in item menu
+            selectedItemIndex = (selectedItemIndex - 1 + GameManager.Instance.player.Inventory.Count) % GameManager.Instance.player.Inventory.Count; // Move up in item menu
         }
         else if (moveInput.y < 0 && moveAction.triggered && isInItemMenu)
         {
-            selectedItemIndex = (selectedItemIndex + 1) % BattleManager.Instance.player.Inventory.Count; // Move down in item menu
+            selectedItemIndex = (selectedItemIndex + 1) % GameManager.Instance.player.Inventory.Count; // Move down in item menu
         }
 
         if (moveInput.y > 0 && moveAction.triggered && isInTechniqueMenu)
         {
-            selectedTechniqueIndex = (selectedTechniqueIndex - 1 + BattleManager.Instance.player.Techniques.Count) % BattleManager.Instance.player.Techniques.Count; // Move up in technique menu
+            selectedTechniqueIndex = (selectedTechniqueIndex - 1 + GameManager.Instance.player.Techniques.Count) % GameManager.Instance.player.Techniques.Count; // Move up in technique menu
         }
         else if (moveInput.y < 0 && moveAction.triggered && isInTechniqueMenu)
         {
-            selectedTechniqueIndex = (selectedTechniqueIndex + 1) % BattleManager.Instance.player.Techniques.Count; // Move down in technique menu
+            selectedTechniqueIndex = (selectedTechniqueIndex + 1) % GameManager.Instance.player.Techniques.Count; // Move down in technique menu
         }
 
         // Handle button confirmation
@@ -183,7 +183,7 @@ public class BattleUIManager : MonoBehaviour
 
     private void ExecuteItem()
     {
-        if (selectedItemIndex < 0 || selectedItemIndex >= BattleManager.Instance.player.Inventory.Count)
+        if (selectedItemIndex < 0 || selectedItemIndex >= GameManager.Instance.player.Inventory.Count)
         {
             Debug.LogWarning("Invalid item selection.");
             return;
@@ -196,7 +196,7 @@ public class BattleUIManager : MonoBehaviour
 
     private void ExecuteTechnique()
     {
-        if (selectedTechniqueIndex < 0 || selectedTechniqueIndex >= BattleManager.Instance.player.Techniques.Count)
+        if (selectedTechniqueIndex < 0 || selectedTechniqueIndex >= GameManager.Instance.player.Techniques.Count)
         {
             Debug.LogWarning("Invalid technique selection.");
             return;
@@ -214,7 +214,7 @@ public class BattleUIManager : MonoBehaviour
         selectedItemIndex = 0;
 
         // Populate the item menu with items from the player's inventory
-        IPlayer player = BattleManager.Instance.player;
+        IPlayer player = GameManager.Instance.player;
         if (player.Inventory.Count == 0)
         {
             itemMenuText.text = "No items available.";
@@ -236,7 +236,7 @@ public class BattleUIManager : MonoBehaviour
         selectedTechniqueIndex = 0;
 
         // Populate the technique menu with techniques from the player's arsenal
-        IPlayer player = BattleManager.Instance.player;
+        IPlayer player = GameManager.Instance.player;
         if (player.Techniques.Count == 0)
         {
             techniqueMenuText.text = "No techniques available.";
@@ -255,7 +255,7 @@ public class BattleUIManager : MonoBehaviour
     {
         itemMenuText.text = "";
         //Highlight the selected item in the item menu
-        IPlayer player = BattleManager.Instance.player;
+        IPlayer player = GameManager.Instance.player;
         for (int i = 0; i < player.Inventory.Count; i++)
         {
             IItem item = player.GetItem(i);
@@ -276,7 +276,7 @@ public class BattleUIManager : MonoBehaviour
     {
         techniqueMenuText.text = "";
         // Highlight the selected technique in the technique menu
-        IPlayer player = BattleManager.Instance.player;
+        IPlayer player = GameManager.Instance.player;
         for (int i = 0; i < player.Techniques.Count; i++)
         {
             ITechnique technique = player.GetTechnique(i);

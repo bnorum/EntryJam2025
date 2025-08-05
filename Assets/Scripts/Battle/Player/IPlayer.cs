@@ -6,6 +6,9 @@ using UnityEngine;
 
 public interface IPlayer : ICombatant
 {
+    int LVL { get; } // Level. A unique player value.
+    int EXP { get; } // Experience. A unique player value.
+    int EXPtoNext { get; } // Experience to next level. A unique player value.
     int EXH { get; } // Exhaustion. A unique player value.
     int MaxEXH { get; } // Max Exhaustion. A unique player value.
     bool Bracing { get; } // Defending, but for fishing.

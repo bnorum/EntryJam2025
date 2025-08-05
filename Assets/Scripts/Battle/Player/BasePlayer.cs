@@ -1,10 +1,12 @@
 using System.Collections.Generic;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 [System.Serializable]
 public class BasePlayer : IPlayer
 {
+    [SerializeField] private int level;
+    [SerializeField] private int exp;
+    [SerializeField] private int expToNext;
     [SerializeField] private string playerName;
     [SerializeField] private int exhaustion;
     [SerializeField] private int maxExhaustion;
@@ -17,7 +19,10 @@ public class BasePlayer : IPlayer
     [SerializeField] private List<ITechnique> techniques;
 
     public string Name => playerName;
+    public int LVL => level;
     public int EXH => exhaustion;
+    public int EXP => exp;
+    public int EXPtoNext => expToNext;
     public int MaxEXH => maxExhaustion;
     public bool Bracing => bracing;
     public int MP => mp;
@@ -31,8 +36,11 @@ public class BasePlayer : IPlayer
     // Constructor.
     // We create a player like this:
     // Player player = new Player("PlayerName", 100, 20, 10, 5);
-    public BasePlayer(string name, int maxExh, int maxMp, int atk, int def)
+    public BasePlayer(int lvl, int exp, int exptonext, string name, int maxExh, int maxMp, int atk, int def)
     {
+        this.level = lvl;
+        this.exp = exp;
+        this.expToNext = exptonext;
         playerName = name;
         maxExhaustion = maxExh;
         exhaustion = 0;

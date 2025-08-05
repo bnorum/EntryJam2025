@@ -47,9 +47,7 @@ public class BattleManager : MonoBehaviour
     public enum BattleState { START, PLAYERTURN, FISHTURN, WIN, LOSE, RUN}
     public BattleState state;
 
-    //DUMMY SPRITE FOR NOW :))))
-    public Sprite dummySprite;
-    public GameObject dummyBackground;
+    public Transform backgroundHolder;
 
     void Start()
     {
@@ -58,7 +56,7 @@ public class BattleManager : MonoBehaviour
         // Until we can pass values into the battle manager, we will use this to set up the battle.
         // This is a placeholder for the actual battle setup logic.
         // Instead of using this, eventually we will have a transitionary script which will pass the player and fish objects to the battle manager.
-        StartCoroutine(SetupBattle(new BasePlayer("Fisherman", 100, 30, 10, 5), new BaseFish("Smallmouth Bass", 65, 20, 10, 5, dummySprite), dummyBackground));
+        //StartCoroutine(SetupBattle(new BasePlayer(1, "Fisherman", 100, 30, 10, 5), new BaseFish("Smallmouth Bass", 65, 20, 10, 5, dummySprite, new AlwaysPullStrategy()), dummyBackground));
     }
 
     void Update()
@@ -67,16 +65,16 @@ public class BattleManager : MonoBehaviour
     }
 
 
-    IEnumerator SetupBattle(BasePlayer p, BaseFish f, GameObject backgroundPrefab = null)
+    public IEnumerator SetupBattle(BasePlayer p, IFish f, GameObject backgroundPrefab = null)
     {
         player = p;
         fish = f;
         DemoMethod();
-        Instantiate(backgroundPrefab);
+        Instantiate(backgroundPrefab, backgroundHolder);
         UpdateStats();
 
         FishSpriteRenderer.sprite = fish.Sprite;
-        strategy = new AlwaysPullStrategy();
+        strategy = fish.Strategy;
         EnqueueMessage($"{fish.Name} is on the other end, will you answer?");
         yield return new WaitForSeconds(2f);
 
@@ -90,8 +88,8 @@ public class BattleManager : MonoBehaviour
     // This is just for testing purposes, so we can see how the UI works, or doesn't work.
     public void DemoMethod()
     {
-        player.Inventory.Add(new WaterBottle());
-        player.Inventory.Add(new WaterBottle());
+        //player.Inventory.Add(new WaterBottle());
+        //player.Inventory.Add(new WaterBottle());
         player.Techniques.Add(new SuperReelTechnique());
     }
 
@@ -245,12 +243,16 @@ public class BattleManager : MonoBehaviour
         {
             EnqueueMessage($"You caught the {fish.Name}!");
             // Handle win logic
+
+            //were gonna have to use a coroutine to wait for the message to finish
+            GameManager.Instance.EndBattle();
         }
         else if (state == BattleState.LOSE)
         {
             EnqueueMessage("Your line snapped!");
             // Handle lose logic
-        } else if (state == BattleState.RUN)
+        }
+        else if (state == BattleState.RUN)
         {
             EnqueueMessage("You snapped your line!");
             // Handle run logic
