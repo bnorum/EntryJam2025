@@ -28,6 +28,7 @@ public class OverworldUIManager : MonoBehaviour
     public Transform buttonShowTarget;
 
     public GameObject statsPanel;
+    public TMP_Text playerStats;
     public Transform statsHideTarget;
     public Transform statsShowTarget;
 
@@ -48,6 +49,11 @@ public class OverworldUIManager : MonoBehaviour
     public List<Image> buttons;
     public int selectedButtonIndex = 0;
 
+    public AudioClip menuNavigateSound;
+    public AudioClip menuSelectSound;
+    public AudioClip menuCancelSound;
+    public AudioClip menuOpenSound;
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -65,8 +71,12 @@ public class OverworldUIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (toggleMenuAction.triggered)
+        ShowSelectedItem();
+
+        if (toggleMenuAction.triggered && GameManager.Instance.gameState != GameManager.GameState.BATTLE)
         {
+            AudioSource.PlayClipAtPoint(menuOpenSound, Camera.main.transform.position);
+            UpdateStats();
             if (GameManager.Instance.gameState == GameManager.GameState.FREE)
             {
                 GameManager.Instance.gameState = GameManager.GameState.MENU;
@@ -85,11 +95,13 @@ public class OverworldUIManager : MonoBehaviour
         {
             isInItemMenu = false;
             inventoryPanel.SetActive(false);
+            AudioSource.PlayClipAtPoint(menuCancelSound, Camera.main.transform.position);
         }
         else if (cancelAction.triggered && isInEquipmentMenu)
         {
             isInEquipmentMenu = false;
             equipmentPanel.SetActive(false);
+            AudioSource.PlayClipAtPoint(menuCancelSound, Camera.main.transform.position);
         }
 
         if (GameManager.Instance.gameState == GameManager.GameState.MENU)
@@ -123,20 +135,24 @@ public class OverworldUIManager : MonoBehaviour
             if (moveInput.x > 0 && moveAction.triggered && !isInItemMenu && !isInEquipmentMenu)
             {
                 selectedButtonIndex = (selectedButtonIndex + 1) % buttons.Count; // Move right
+                AudioSource.PlayClipAtPoint(menuNavigateSound, Camera.main.transform.position);
             }
             else if (moveInput.x < 0 && moveAction.triggered && !isInItemMenu && !isInEquipmentMenu)
             {
                 selectedButtonIndex = (selectedButtonIndex - 1 + buttons.Count) % buttons.Count; // Move left
+                AudioSource.PlayClipAtPoint(menuNavigateSound, Camera.main.transform.position);
             }
 
             // Handle item and technique menu navigation
             if (moveInput.y > 0 && moveAction.triggered && isInItemMenu)
             {
-
+                selectedItemIndex = (selectedItemIndex - 1 + GameManager.Instance.player.Inventory.Count) % GameManager.Instance.player.Inventory.Count; // Move up in item menu
+                AudioSource.PlayClipAtPoint(menuNavigateSound, Camera.main.transform.position);
             }
             else if (moveInput.y < 0 && moveAction.triggered && isInItemMenu)
             {
-
+                selectedItemIndex = (selectedItemIndex + 1) % GameManager.Instance.player.Inventory.Count; // Move down in item menu
+                AudioSource.PlayClipAtPoint(menuNavigateSound, Camera.main.transform.position);
             }
 
             if (moveInput.y > 0 && moveAction.triggered && isInEquipmentMenu)
@@ -151,6 +167,7 @@ public class OverworldUIManager : MonoBehaviour
             if (confirmAction.triggered && !isInEquipmentMenu && !isInItemMenu)
             {
                 ExecuteSelectedButton();
+                AudioSource.PlayClipAtPoint(menuSelectSound, Camera.main.transform.position);
             }
         }
 
@@ -158,6 +175,7 @@ public class OverworldUIManager : MonoBehaviour
 
     private void ExecuteSelectedButton()
     {
+
         // Look, this is a bad implementation. But look at the bright side! There's only three buttons right now.
         if (selectedButtonIndex == 0)
         {
@@ -194,6 +212,31 @@ public class OverworldUIManager : MonoBehaviour
                 GameManager.Instance.player
                 ));
         }
+    }
+
+
+    public void ShowSelectedItem()
+    {
+        inventoryText.text = "";
+        //Highlight the selected item in the item menu
+        IPlayer player = GameManager.Instance.player;
+        for (int i = 0; i < player.Inventory.Count; i++)
+        {
+            IItem item = player.GetItem(i);
+            if (i == selectedItemIndex)
+            {
+                inventoryText.text += $"\n<color=yellow>{item.Name}</color>";
+            }
+            else
+            {
+                inventoryText.text += $"\n{item.Name}";
+            }
+        }
+    }
+
+    public void UpdateStats()
+    {
+        playerStats.text = $"{GameManager.Instance.player.Name}\nEXH: {GameManager.Instance.player.EXH}/{GameManager.Instance.player.MaxEXH}\nMP: {GameManager.Instance.player.MP}/{GameManager.Instance.player.MaxMP}";
     }
 
 }

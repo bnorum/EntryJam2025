@@ -178,8 +178,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: cee6d2a6262c9cc4388aaa3ed14e01f8, type: 2}
+  m_sharedMaterial: {fileID: 8446679176318498663, guid: cee6d2a6262c9cc4388aaa3ed14e01f8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -314,8 +314,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Metalfish
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: cee6d2a6262c9cc4388aaa3ed14e01f8, type: 2}
+  m_sharedMaterial: {fileID: 8446679176318498663, guid: cee6d2a6262c9cc4388aaa3ed14e01f8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -798,8 +798,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Load Game
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: cee6d2a6262c9cc4388aaa3ed14e01f8, type: 2}
+  m_sharedMaterial: {fileID: 8446679176318498663, guid: cee6d2a6262c9cc4388aaa3ed14e01f8, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1511,6 +1511,8 @@ MonoBehaviour:
     defense: 0
   playerPrefab: {fileID: 180091386520832865, guid: c6d9819270f4f4c4b8b37ba6923782ad, type: 3}
   mainCamera: {fileID: 0}
+  BattleStartCanvasPrefab: {fileID: 248051220789037200, guid: 1ed60d7b72ab51e47b2b8a64c3eb2986, type: 3}
+  battleStartSound: {fileID: 8300000, guid: d049033def086de40bcbf2fc38bd600d, type: 3}
 --- !u!4 &2143668784
 Transform:
   m_ObjectHideFlags: 0

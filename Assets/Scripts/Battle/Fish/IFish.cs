@@ -9,6 +9,7 @@ public interface IFish : ICombatant
     int MaxDST { get; } // Max Distance, a Unique fish value.
     Sprite Sprite { get; } // The fish sprite.
     IStrategy Strategy { get; } // The fish's strategy.
+    int XP { get; }
 
     void IncreaseDistance(int amount); // Increase Distance
     void DecreaseDistance(int amount); // Decrease Distance

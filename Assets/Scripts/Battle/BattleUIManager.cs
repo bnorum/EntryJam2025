@@ -41,6 +41,12 @@ public class BattleUIManager : MonoBehaviour
     public int selectedTechniqueIndex = 0;
     public bool isInTechniqueMenu = false;
 
+    public AudioClip menuNavigateSound;
+    public AudioClip menuSelectSound;
+    public AudioClip menuCancelSound;
+
+    public AudioSource battleMusicSource;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -49,6 +55,7 @@ public class BattleUIManager : MonoBehaviour
         cancelAction = InputSystem.actions.FindAction("Cancel");
         HideTechniqueMenu();
         HideItemMenu();
+        battleMusicSource.Play();
     }
 
     // Update is called once per frame
@@ -72,45 +79,54 @@ public class BattleUIManager : MonoBehaviour
         if (moveInput.x > 0 && moveAction.triggered && !isInItemMenu && !isInTechniqueMenu)
         {
             selectedButtonIndex = (selectedButtonIndex + 1) % buttons.Count; // Move right
+            AudioSource.PlayClipAtPoint(menuNavigateSound, Vector3.zero);
         }
         else if (moveInput.x < 0 && moveAction.triggered && !isInItemMenu && !isInTechniqueMenu)
         {
             selectedButtonIndex = (selectedButtonIndex - 1 + buttons.Count) % buttons.Count; // Move left
+            AudioSource.PlayClipAtPoint(menuNavigateSound, Vector3.zero);
         }
 
         // Handle item and technique menu navigation
         if (moveInput.y > 0 && moveAction.triggered && isInItemMenu)
         {
             selectedItemIndex = (selectedItemIndex - 1 + GameManager.Instance.player.Inventory.Count) % GameManager.Instance.player.Inventory.Count; // Move up in item menu
+            AudioSource.PlayClipAtPoint(menuNavigateSound, Vector3.zero);
         }
         else if (moveInput.y < 0 && moveAction.triggered && isInItemMenu)
         {
             selectedItemIndex = (selectedItemIndex + 1) % GameManager.Instance.player.Inventory.Count; // Move down in item menu
+            AudioSource.PlayClipAtPoint(menuNavigateSound, Vector3.zero);
         }
 
         if (moveInput.y > 0 && moveAction.triggered && isInTechniqueMenu)
         {
             selectedTechniqueIndex = (selectedTechniqueIndex - 1 + GameManager.Instance.player.Techniques.Count) % GameManager.Instance.player.Techniques.Count; // Move up in technique menu
+            AudioSource.PlayClipAtPoint(menuNavigateSound, Vector3.zero);
         }
         else if (moveInput.y < 0 && moveAction.triggered && isInTechniqueMenu)
         {
             selectedTechniqueIndex = (selectedTechniqueIndex + 1) % GameManager.Instance.player.Techniques.Count; // Move down in technique menu
+            AudioSource.PlayClipAtPoint(menuNavigateSound, Vector3.zero);
         }
 
         // Handle button confirmation
         if (confirmAction.triggered && BattleManager.Instance.isShowingInput && !isInItemMenu && !isInTechniqueMenu)
         {
             ExecuteSelectedButton();
+            AudioSource.PlayClipAtPoint(menuSelectSound, Vector3.zero);
         }
 
         else if (confirmAction.triggered && BattleManager.Instance.isShowingInput && isInItemMenu)
         {
             ExecuteItem();
+            AudioSource.PlayClipAtPoint(menuSelectSound, Vector3.zero);
         }
 
         else if (confirmAction.triggered && BattleManager.Instance.isShowingInput && isInTechniqueMenu)
         {
             ExecuteTechnique();
+            AudioSource.PlayClipAtPoint(menuSelectSound, Vector3.zero);
         }
 
         // Handle cancel action
@@ -120,6 +136,7 @@ public class BattleUIManager : MonoBehaviour
             isInItemMenu = false;
             HideTechniqueMenu();
             isInTechniqueMenu = false;
+            AudioSource.PlayClipAtPoint(menuCancelSound, Vector3.zero);
         }
 
         // Show or hide the button panel based on the battle state
@@ -289,6 +306,17 @@ public class BattleUIManager : MonoBehaviour
                 techniqueMenuText.text += $"\n{technique.Name} - {technique.Cost} MP";
             }
         }
+    }
+
+    public System.Collections.IEnumerator FadeOutBattleMusic()
+    {
+        while (battleMusicSource.volume > 0)
+        {
+            battleMusicSource.volume -= 0.01f;
+            yield return new WaitForSeconds(0.1f);
+        }
+        battleMusicSource.Stop();
+        battleMusicSource.volume = 1f;
     }
 }
 

@@ -36,11 +36,11 @@ public class BasePlayer : IPlayer
     // Constructor.
     // We create a player like this:
     // Player player = new Player("PlayerName", 100, 20, 10, 5);
-    public BasePlayer(int lvl, int exp, int exptonext, string name, int maxExh, int maxMp, int atk, int def)
+    public BasePlayer(int lvl, int exp, string name, int maxExh, int maxMp, int atk, int def, int expToNext = 10)
     {
         this.level = lvl;
         this.exp = exp;
-        this.expToNext = exptonext;
+        this.expToNext = expToNext;
         playerName = name;
         maxExhaustion = maxExh;
         exhaustion = 0;
@@ -93,5 +93,30 @@ public class BasePlayer : IPlayer
     {
         if (index < 0 || index >= inventory.Count) return null;
         return inventory[index];
+    }
+
+    public void AddEXP(int amount)
+    {
+        exp += amount;
+    }
+
+    public string[] LevelUp()
+    {
+        level++;
+        exp -= expToNext;
+        expToNext = Mathf.RoundToInt(expToNext * 1.5f);
+        maxExhaustion += 5;
+        maxMP += 2;
+        attack += 2;
+        defense += 2;
+
+        return new string[]
+        {
+            $"Leveled up to {level}!",
+            $"Max Exhaustion increased to {maxExhaustion}!",
+            $"Max MP increased to {maxMP}!",
+            $"Attack increased to {attack}!",
+            $"Defense increased to {defense}!"
+        };
     }
 }

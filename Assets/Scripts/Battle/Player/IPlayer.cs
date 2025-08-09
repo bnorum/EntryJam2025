@@ -25,4 +25,7 @@ public interface IPlayer : ICombatant
 
     ITechnique GetTechnique(int index); // Get a technique from the player's list
     IItem GetItem(int index); // Get an item from the player's inventory
+
+    void AddEXP(int amount);
+    string[] LevelUp(); //returns strings of all the stats leveled up
 }

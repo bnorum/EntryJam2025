@@ -13,6 +13,7 @@ public class BaseFish : IFish
     [SerializeField] private int defense;
     [SerializeField] private Sprite sprite;
     [SerializeField] private IStrategy strategy;
+    [SerializeField] private int xp;
 
     public string Name => fishName;
     public int DST => distance;
@@ -23,12 +24,13 @@ public class BaseFish : IFish
     public int DEF => defense;
     public Sprite Sprite => sprite;
     public IStrategy Strategy => strategy;
+    public int XP => xp;
 
 
     // Constructor.
     // We create a fish like this:
     // BaseFish fish = new BaseFish("FishName", 100, 20, 10, 5);
-    public BaseFish(string name, int maxDist, int maxMp, int atk, int def, Sprite spr, IStrategy strat)
+    public BaseFish(string name, int maxDist, int maxMp, int atk, int def, int Xp, Sprite spr, IStrategy strat)
     {
         fishName = name;
         maxDistance = maxDist;
@@ -38,6 +40,7 @@ public class BaseFish : IFish
         mp = maxMp;
         attack = atk;
         defense = def;
+        xp = Xp;
         strategy = strat;
     }
 

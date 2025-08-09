@@ -44,7 +44,7 @@ public class BattleManager : MonoBehaviour
 
 
     // Needs to be expanded if we decide to have a party system.
-    public enum BattleState { START, PLAYERTURN, FISHTURN, WIN, LOSE, RUN}
+    public enum BattleState { START, PLAYERTURN, FISHTURN, WIN, LOSE, RUN }
     public BattleState state;
 
     public Transform backgroundHolder;
@@ -74,6 +74,7 @@ public class BattleManager : MonoBehaviour
         UpdateStats();
 
         FishSpriteRenderer.sprite = fish.Sprite;
+        FishSpriteRenderer.transform.localScale = new Vector3(.8f, .8f, .8f);
         strategy = fish.Strategy;
         EnqueueMessage($"{fish.Name} is on the other end, will you answer?");
         yield return new WaitForSeconds(2f);
@@ -243,9 +244,21 @@ public class BattleManager : MonoBehaviour
         {
             EnqueueMessage($"You caught the {fish.Name}!");
             // Handle win logic
+            StartCoroutine(BattleUIManager.Instance.FadeOutBattleMusic());
+            if (fish.XP + player.EXP >= player.EXPtoNext)
+            {
+                player.AddEXP(fish.XP);
+                EnqueueMessage($"You gained {fish.XP} EXP and leveled up!");
+                LevelUp();
+            }
+            else
+            {
+                player.AddEXP(fish.XP);
+                EnqueueMessage($"You gained {fish.XP} EXP!");
+            }
 
             //were gonna have to use a coroutine to wait for the message to finish
-            GameManager.Instance.EndBattle();
+            StartCoroutine(WaitForMessageAndEndBattle());
         }
         else if (state == BattleState.LOSE)
         {
@@ -257,6 +270,13 @@ public class BattleManager : MonoBehaviour
             EnqueueMessage("You snapped your line!");
             // Handle run logic
         }
+    }
+
+    IEnumerator WaitForMessageAndEndBattle()
+    {
+        yield return new WaitUntil(() => messageQueue.Count == 0 && !isShowingMessage);
+        // Now we can end the battle
+        GameManager.Instance.StartCoroutine(GameManager.Instance.EndBattle());
     }
 
     // Ideally, this should be in a UIManager class, whoops.
@@ -315,6 +335,15 @@ public class BattleManager : MonoBehaviour
     {
         playerStats.text = $"{player.Name}\nEXH: {player.EXH}/{player.MaxEXH}\nMP: {player.MP}/{player.MaxMP}";
         //enemyStats.text = $"Enemy: {enemy.Name}\nHP: {enemy.HP}/{enemy.MaxHP}\nMP: {enemy.MP}/{enemy.MaxMP}";
+    }
+
+    public void LevelUp()
+    {
+       string[] levelUpMessages = player.LevelUp();
+       foreach (string message in levelUpMessages)
+       {
+           EnqueueMessage(message);
+       }
     }
 
 

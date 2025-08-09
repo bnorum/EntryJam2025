@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - BattleCamera
+  - BattleStartCanvas
   layers:
   - Default
   - TransparentFX
@@ -14,7 +15,7 @@ TagManager:
   - UI
   - Battle
   - BattleUI
-  - 
+  - BattleStartCanvas
   - 
   - 
   - 
