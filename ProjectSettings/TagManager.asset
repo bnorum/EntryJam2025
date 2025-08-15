@@ -6,6 +6,7 @@ TagManager:
   tags:
   - BattleCamera
   - BattleStartCanvas
+  - Dock
   layers:
   - Default
   - TransparentFX

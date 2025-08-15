@@ -46,7 +46,12 @@ public class GameManager : MonoBehaviour
         {
             mainCamera = Camera.main;
             overworldPlayerPosition = Instantiate(playerPrefab, Vector2.zero, Quaternion.identity).GetComponent<Transform>();
-
+            var cineCam = UnityEngine.Object.FindFirstObjectByType<Unity.Cinemachine.CinemachineCamera>();
+            if (cineCam != null)
+            {
+                cineCam.Follow = overworldPlayerPosition;
+                cineCam.LookAt = overworldPlayerPosition;
+            }
             player = new BasePlayer(1, 0, "Fisherman", 100, 30, 10, 5);
 
         }
@@ -74,6 +79,12 @@ public class GameManager : MonoBehaviour
 
         mainCamera = Camera.main;
         overworldPlayerPosition = Instantiate(playerPrefab, Vector2.zero, Quaternion.identity).GetComponent<Transform>();
+        var cineCam = UnityEngine.Object.FindFirstObjectByType<Unity.Cinemachine.CinemachineCamera>();
+        if (cineCam != null)
+        {
+            cineCam.Follow = overworldPlayerPosition;
+            cineCam.LookAt = overworldPlayerPosition;
+        }
     }
 
     public void LoadGame()
@@ -94,6 +105,15 @@ public class GameManager : MonoBehaviour
 
         mainCamera = Camera.main;
         overworldPlayerPosition = Instantiate(playerPrefab, Vector2.zero, Quaternion.identity).GetComponent<Transform>();
+
+        // not an ideal way to do this. But if it works....
+        var cineCam = UnityEngine.Object.FindFirstObjectByType<Unity.Cinemachine.CinemachineCamera>();
+        if (cineCam != null)
+        {
+            cineCam.Follow = overworldPlayerPosition;
+            cineCam.LookAt = overworldPlayerPosition;
+        }
+
         SaveData data = SaveManager.Load();
         if (data != null)
         {
